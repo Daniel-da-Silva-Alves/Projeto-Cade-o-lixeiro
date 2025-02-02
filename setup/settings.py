@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'tracking'
+    'app',
 ]
 
 MIDDLEWARE = [
@@ -132,7 +132,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "tracking", "static"),  # Aponta para a pasta correta
+    os.path.join(BASE_DIR, "app", "static"),  # Aponta para a pasta correta
 ]
 
 # Default primary key field type

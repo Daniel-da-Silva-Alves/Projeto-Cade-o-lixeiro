@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Área do Coletor | Cadê o Lixeiro?
+{% endblock %}
+
+{% block content %}
+
+    <!-- Main Content -->
+    <main class="map-container">
+
+        <!-- Botão de rastreamento -->
+        <div id="popup" class="popup">
+            <div class="popup-content">
+                <!-- Título acima do botão -->
+                <h5>Clique no botão abaixo:</h5>
+                <!-- Botão de rastreamento -->
+            </div>
+        </div>
+
+        <!-- Map Placeholder with Leaflet -->
+        <div id="map" class="map-placeholder"></div>
+
+        <!-- Tabela de Rotas -->
+        <div class="route-table-container">
+            <div class="card">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0">Rota de Coleta</h6>
+                    <!-- Botão para expandir/recolher -->
+                    <button class="btn btn-link text-decoration-none" type="button" id="toggleButton">
+                        <span class="icon-expand">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-down" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+                            </svg>
+                        </span>
+                        <span class="icon-collapse d-none">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-up" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M1.646 10.354a.5.5 0 0 1 .708 0L8 4.707l5.646 5.647a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1-.708 0l-6 6a.5.5 0 0 1 0 .708z"/>
+                            </svg>
+                        </span>
+                    </button>
+                </div>
+                <!-- Corpo recolhível da tabela -->
+                <div id="routeTable" class="collapse">
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-striped mb-0">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th>Ordem</th>
+                                        <th>Endereço</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="route-locations">
+                                    <tr>
+                                        <td>1</td>
+                                        <td>Endereço 1</td>
+                                    </tr>
+                                    <tr>
+                                        <td>2</td>
+                                        <td>Endereço 2</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>                
+            </div>
+        </div>
+
+        <!-- Legend Card -->
+        <div class="legend-card">
+            <div class="card">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0">Informações de Rastreamento</h6>
+                </div>
+                <div class="card-body">
+                    <div id="legend-card" class="card bg-transparent border-0">
+                        <div class="collector-data">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <strong>Motorista:</strong>
+                                <span id="driver-name" class="text-start">aguardando...</span> <!-- Alinhamento à esquerda -->
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <strong>Veículo:</strong>
+                                <span id="vehicle-id" class="text-start">aguardando...</span> <!-- Alinhamento à esquerda -->
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <strong>Endereço:</strong>
+                                <span id="address" class="text-start">aguardando...</span> <!-- Alinhamento à esquerda -->
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <strong>Status:</strong>
+                                <span id="status" class="text-start">aguardando...</span> <!-- Alinhamento à esquerda -->
+                            </div>
+                        </div>
+                    </div>
+                    <meta name="csrf-token" content="{{ csrf_token }}">
+                </div>
+            </div>
+        </div>
+    </main>  
+{% endblock %}

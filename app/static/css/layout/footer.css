@@ -1,0 +1,13 @@
+/* Arquivos contêm estilos específicos para o rodapé.*/
+
+
+/* layout/footer.css */
+.footer {
+    background-color: var(--primary-white);
+    color: var(--primary-grey);
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    padding: 10px 0;
+}

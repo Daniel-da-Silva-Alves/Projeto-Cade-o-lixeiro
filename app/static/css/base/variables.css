@@ -1,0 +1,9 @@
+/*  Aqui você pode definir variáveis globais, como cores, fontes, tamanhos, e até espaçamentos.
+
+/* base/variables.css */
+:root {
+    --primary-green: #16a34a;
+    --primary-white: ##f8f9fa;
+    --primary-grey: #6c757d;
+}
+
