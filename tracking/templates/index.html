@@ -1,0 +1,191 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Home
+{% endblock %}
+
+{% block content %}
+    <!-- Main Content -->
+    <main class="map-container">
+        <!-- Filtros -->
+        <div class="filters-card">
+            <div class="card">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0">Filtros</h6>
+                    <button class="btn btn-sm btn-link text-primary-green p-0" type="button" data-bs-toggle="collapse" data-bs-target="#filterContent">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                        </svg>
+                    </button>
+                </div>
+                <div id="filterContent" class="collapse show">
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label">Bairros</label>
+                                <select class="form-select" id="neighborhoodSelect">
+                                    <option value="todos">Todos os bairros</option>
+                                    <option value="Adrianópolis">Adrianópolis</option>
+                                    <option value="Aleixo">Aleixo</option>
+                                    <option value="Alvorada">Alvorada</option>
+                                    <option value="Armando Mendes">Armando Mendes</option>
+                                    <option value="Betânia">Betânia</option>
+                                    <option value="Cachoeirinha">Cachoeirinha</option>
+                                    <option value="Centro">Centro</option>
+                                    <option value="Chapada">Chapada</option>
+                                    <option value="Cidade de Deus">Cidade de Deus</option>
+                                    <option value="Cidade Nova">Cidade Nova</option>
+                                    <option value="Colônia Antônio Aleixo">Colônia Antônio Aleixo</option>
+                                    <option value="Colônia Oliveira Machado">Colônia Oliveira Machado</option>
+                                    <option value="Colônia Santo Antônio">Colônia Santo Antônio</option>
+                                    <option value="Colônia Terra Nova">Colônia Terra Nova</option>
+                                    <option value="Compensa">Compensa</option>
+                                    <option value="Coroado">Coroado</option>
+                                    <option value="Crespo">Crespo</option>
+                                    <option value="Da Paz">Da Paz</option>
+                                    <option value="Distrito Industrial I">Distrito Industrial I</option>
+                                    <option value="Distrito Industrial II">Distrito Industrial II</option>
+                                    <option value="Dom Pedro">Dom Pedro</option>
+                                    <option value="Educandos">Educandos</option>
+                                    <option value="Flores">Flores</option>
+                                    <option value="Gilberto Mestrinho">Gilberto Mestrinho</option>
+                                    <option value="Glória">Glória</option>
+                                    <option value="Japiim">Japiim</option>
+                                    <option value="Jorge Teixeira">Jorge Teixeira</option>
+                                    <option value="Lago Azul">Lago Azul</option>
+                                    <option value="Lírio do Vale">Lírio do Vale</option>
+                                    <option value="Mauazinho">Mauazinho</option>
+                                    <option value="Monte das Oliveiras">Monte das Oliveiras</option>
+                                    <option value="Morro da Liberdade">Morro da Liberdade</option>
+                                    <option value="Nossa Senhora Aparecida">Nossa Senhora Aparecida</option>
+                                    <option value="Nossa Senhora das Graças">Nossa Senhora das Graças</option>
+                                    <option value="Nova Cidade">Nova Cidade</option>
+                                    <option value="Nova Esperança">Nova Esperança</option>
+                                    <option value="Novo Aleixo">Novo Aleixo</option>
+                                    <option value="Novo Israel">Novo Israel</option>
+                                    <option value="Parque 10 de Novembro">Parque 10 de Novembro</option>
+                                    <option value="Petrópolis">Petrópolis</option>
+                                    <option value="Planalto">Planalto</option>
+                                    <option value="Ponta Negra">Ponta Negra</option>
+                                    <option value="Praça 14 de Janeiro">Praça 14 de Janeiro</option>
+                                    <option value="Presidente Vargas">Presidente Vargas</option>
+                                    <option value="Puraquequara">Puraquequara</option>
+                                    <option value="Raiz">Raiz</option>
+                                    <option value="Redenção">Redenção</option>
+                                    <option value="Santa Etelvina">Santa Etelvina</option>
+                                    <option value="Santa Luzia">Santa Luzia</option>
+                                    <option value="Santo Agostinho">Santo Agostinho</option>
+                                    <option value="Santo Antônio">Santo Antônio</option>
+                                    <option value="São Francisco">São Francisco</option>
+                                    <option value="São Geraldo">São Geraldo</option>
+                                    <option value="São Jorge">São Jorge</option>
+                                    <option value="São José Operário">São José Operário</option>
+                                    <option value="São Lázaro">São Lázaro</option>
+                                    <option value="São Raimundo">São Raimundo</option>
+                                    <option value="Tancredo Neves">Tancredo Neves</option>
+                                    <option value="Tarumã">Tarumã</option>
+                                    <option value="Tarumã-Açu">Tarumã-Açu</option>
+                                    <option value="Vila Buriti">Vila Buriti</option>
+                                    <option value="Vila da Prata">Vila da Prata</option>
+                                    <option value="Zumbi dos Palmares">Zumbi dos Palmares</option>
+                                </select>                                
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <button class="btn btn-outline-secondary btn-sm" id="clearFilters">Limpar</button>
+                            <button class="btn btn-primary-green btn-sm" id="applyFilters">Aplicar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Map Placeholder with Leaflet -->
+        <div id="mapid" class="map-placeholder"></div>
+        
+        <!-- Legend Card -->
+        <div class="legend-card">
+            <div class="card">
+                <!-- Cabeçalho -->
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0">Coletores Ativos</h6>
+                    <button class="btn btn-sm btn-link text-primary-green p-0">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.3"/>
+                        </svg>
+                    </button>
+                </div>
+                <!-- Corpo da Card -->
+                <div class="card-body">
+                    <!-- Cabeçalho da Tabela -->
+                    <div class="d-flex justify-content-between mb-3">
+                        <strong>Caminhão</strong>
+                        <strong>Data de Atualização</strong>
+                    </div>
+                    <!-- Lista de Caminhões -->
+                    <div class="truck-list" id="truck-list">
+                        <!-- Os itens de caminhões serão inseridos aqui via JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Modal Login Coletor -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginModalLabel">Login do Coletor</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="loginForm">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="truckId" class="form-label">ID do Caminhão</label>
+                            <input type="text" class="form-control" id="truckId" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Nome do Motorista</label>
+                            <input type="text" class="form-control" id="username" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Senha</label>
+                            <input type="password" class="form-control" name="password" autocomplete="current-password" id="password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary-green w-100">Entrar</button>
+                    </form>
+                    <div id="loginError" class="mt-3 text-danger" style="display: none;">Credenciais inválidas. Tente novamente.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Login Administrativo -->
+    <div class="modal fade" id="adminLoginModal" tabindex="-1" aria-labelledby="adminLoginModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="adminLoginModalLabel">Login Administrativo</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="adminLoginForm">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="adminUsername" class="form-label">Nome de Usuário</label>
+                            <input type="text" class="form-control" id="adminUsername" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="adminPassword" class="form-label">Senha</label>
+                            <input type="password" class="form-control" name="password" autocomplete="current-password" id="adminPassword" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary-green w-100">Entrar</button>
+                    </form>
+                    <div id="adminLoginError" class="mt-3 text-danger" style="display: none;">Credenciais inválidas. Tente novamente.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+

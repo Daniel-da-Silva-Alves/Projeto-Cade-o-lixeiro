@@ -1,0 +1,13 @@
+/* buttons.css: Estilos reutilizáveis para botões (como os botões de ação para interação com os lixeiros ou filtros).
+
+/* components/buttons.css */
+.btn-primary-green {
+    background-color: var(--primary-green);
+    color: white;
+    border: none;
+}
+
+.btn-primary-green:hover {
+    background-color: #15803d;
+    color: white;
+}

@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Horários de Passagem</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <style>
+        .chip {
+            display: inline-block;
+            padding: 3px 6px; /* Reduzido proporcionalmente (antes: 10px 20px) */
+            margin: 5px; /* Pode ser ajustado conforme necessário */
+            font-size: 0.7em; /* Reduzido proporcionalmente (antes: 1em) */
+            border-radius: 10px; /* Reduzido proporcionalmente (antes: 15px) */
+            background-color: #f1f1f1;
+            color: #333;
+            border: 1px solid #ccc;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .chip:hover {
+            background-color: #ddd;
+        }
+
+        .chip:active {
+            background-color: #bbb;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        /* Barra de rolagem na página */
+        body {
+            overflow-y: auto; /* Habilita a barra de rolagem vertical */
+            height: 100vh;    /* Garante que o corpo ocupe toda a altura da tela */
+            margin: 0;        /* Remove margens padrão */
+            padding: 0;       /* Remove espaçamento padrão */
+        }
+        /* Ajuste dinâmico baseado na tela */
+        .dropdown-menu {
+            position: absolute;
+            top: auto; /* Define a posição superior automaticamente */
+            bottom: 100%; /* Ajusta o menu para que ele abra para baixo */
+            z-index: 1050; /* Garante que o dropdown apareça acima de outros elementos */
+        }
+    
+        /* Estilo adicional para o conteúdo da página */
+        .card {
+            margin: 10px;
+        }
+    
+        /* Responsividade: Garantir que o conteúdo ocupe bem a tela */
+        @media (max-width: 768px) {
+            .card-body {
+                padding: 1rem;  /* Ajuste do padding para telas menores */
+            }
+        }
+    
+        .text-primary-green {
+            color: #28a745;
+        }
+    
+        .btn-primary-green {
+            background-color: #28a745;
+            border-color: #28a745;
+        }
+    
+        .btn-primary-green:hover {
+            background-color: #218838;
+            border-color: #1e7e34;
+        }
+    
+        .bg-primary-green {
+            background-color: #28a745;
+        }
+        /* Estilos para o dropdown */
+        select.form-select {
+            max-height: 200px; /* Define a altura máxima do dropdown */
+            overflow-y: auto;  /* Adiciona barra de rolagem quando necessário */
+            width: 100%;       /* Garante que o select ocupe toda a largura */
+        }
+    
+        /* Evita overflow no container do card */
+        .card-body {
+            overflow: visible;
+        }
+    
+        /* Garante que o dropdown do select seja responsivo */
+        select.form-select {
+            max-height: 200px; /* Limita a altura máxima do dropdown */
+            overflow-y: auto; /* Adiciona barra de rolagem quando necessário */
+        }
+    
+        /* Ajusta a barra de rolagem para dispositivos menores */
+        @media (max-width: 576px) {
+            select.form-select {
+                max-height: 150px; /* Altura menor para dispositivos menores */
+            }
+        }
+    
+        /* Estilos para o dropdown */
+        select.form-select {
+            max-height: 200px; /* Define a altura máxima do dropdown */
+            overflow-y: auto;  /* Adiciona barra de rolagem quando necessário */
+            width: 100%;       /* Garante que o select ocupe toda a largura */
+        }
+    
+        /* Responsividade para dispositivos menores */
+        @media (max-width: 576px) {
+            select.form-select {
+                max-height: 150px; /* Ajusta a altura para telas pequenas */
+            }
+        }
+    </style>
+    <title>Routes for {{ neighborhood }}</title>
+</head>
+<body>
+    <!-- Header -->
+    <header class="bg-primary-green shadow">
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <div class="container">
+                <!-- Logo e Nome -->
+                <a class="navbar-brand d-flex align-items-center" href="/">
+                    <span style="margin-left: 50px; font-size: 25px;">Cadê o Lixeiro?</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="47" height="47" viewBox="0 0 16 16" fill="currentColor" style="margin-left: 10px;">
+                        <path d="M0 3.5A1.5 1.5 0 0 1 1.5 2h9A1.5 1.5 0 0 1 12 3.5V5h1.02a1.5 1.5 0 0 1 1.17.563l1.481 1.85a1.5 1.5 0 0 1 .329.938V10.5a1.5 1.5 0 0 1-1.5 1.5H14a2 2 0 1 1-4 0H5a2 2 0 1 1-3.998-.085A1.5 1.5 0 0 1 0 10.5zm1.294 7.456A2 2 0 0 1 4.732 11h5.536a2 2 0 0 1 .732-.732V3.5a.5.5 0 0 0-.5-.5h-9a.5.5 0 0 0-.5.5v7a.5.5 0 0 0 .294.456M12 10a2 2 0 0 1 1.732 1h.768a.5.5 0 0 0 .5-.5V8.35a.5.5 0 0 0-.11-.312l-1.48-1.85A.5.5 0 0 0 13.02 6H12zm-9 1a1 1 0 1 0 0 2 1 1 0 0 0 0-2m9 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2" stroke-width="0.5"/>
+                        <g transform="translate(3.54, 4) scale(0.35)">
+                            <path d="M9.302 1.256a1.5 1.5 0 0 0-2.604 0l-1.704 2.98a.5.5 0 0 0 .869.497l1.703-2.981a.5.5 0 0 1 .868 0l2.54 4.444-1.256-.337a.5.5 0 1 0-.26.966l2.415.647a.5.5 0 0 0 .613-.353l.647-2.415a.5.5 0 1 0-.966-.259l-.333 1.242zM2.973 7.773l-1.255.337a.5.5 0 1 1-.26-.966l2.416-.647a.5.5 0 0 1 .612.353l.647 2.415a.5.5 0 0 1-.966.259l-.333-1.242-2.545 4.454a.5.5 0 0 0 .434.748H5a.5.5 0 0 1 0 1H1.723A1.5 1.5 0 0 1 .421 12.24zm10.89 1.463a.5.5 0 1 0-.868.496l1.716 3.004a.5.5 0 0 1-.434.748h-5.57l.647-.646a.5.5 0 1 0-.708-.707l-1.5 1.5a.5.5 0 0 0 0 .707l1.5 1.5a.5.5 0 1 0 .708-.707l-.647-.647h5.57a1.5 1.5 0 0 0 1.302-2.244z" stroke-width="0.8"/>
+                        </g>
+                    </svg>
+                </a>
+
+                <!-- Toggler para menu em telas pequenas -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Menu -->
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="{% url 'passage_times-interface' %}">
+                                <i class="bi bi-clock"></i> Horários de Passagem
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'discard_locations-interface' %}">
+                                <i class="bi bi-geo-alt"></i> Locais de Descarte
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="bi bi-info-circle"></i> Sobre
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Conteúdo Principal -->
+    <div class="container my-4">
+        <h2 class="text-center mb-3">
+            <i class="bi bi-clock"></i> Horários de Passagem
+        </h2>
+        <p class="text-center text-muted">Filtre por bairros e veja os horários de passagem dos caminhões de coleta.</p>
+
+        <!-- Filtros -->
+            <div class="container mt-5">
+                <div class="row">
+                    <!-- Filtros -->
+                    <div class="col-12">
+                        <div class="card mb-4">
+                            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                                <h6 class="mb-0">Filtros</h6>
+                                <button class="btn btn-sm btn-link text-primary-green" type="button" data-bs-toggle="collapse" data-bs-target="#filterContent">
+                                    <i class="bi bi-funnel"></i>
+                                </button>
+                            </div>
+                            <form method="POST" action="{% url 'fetch_routes_by_neighborhood' %}">
+                                {% csrf_token %}
+                                <div id="filterContent" class="collapse show">
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <label for="neighborhoodSelect" class="form-label">Bairros</label>
+                                            <div id="neighborhood-chips">
+                                                <!-- Tags de bairros -->
+                                                <div class="chip" data-value="Adrianópolis">Adrianópolis</div>
+                                                <div class="chip" data-value="Aleixo">Aleixo</div>
+                                                <div class="chip" data-value="Alvorada">Alvorada</div>
+                                                <div class="chip" data-value="Armando Mendes">Armando Mendes</div>
+                                                <div class="chip" data-value="Betânia">Betânia</div>
+                                                <div class="chip" data-value="Cachoeirinha">Cachoeirinha</div>
+                                                <div class="chip" data-value="Centro">Centro</div>
+                                                <div class="chip" data-value="Chapada">Chapada</div>
+                                                <div class="chip" data-value="Cidade de Deus">Cidade de Deus</div>
+                                                <div class="chip" data-value="Cidade Nova">Cidade Nova</div>
+                                                <div class="chip" data-value="Colônia Antônio Aleixo">Colônia Antônio Aleixo</div>
+                                                <div class="chip" data-value="Colônia Oliveira Machado">Colônia Oliveira Machado</div>
+                                                <div class="chip" data-value="Colônia Santo Antônio">Colônia Santo Antônio</div>
+                                                <div class="chip" data-value="Colônia Terra Nova">Colônia Terra Nova</div>
+                                                <div class="chip" data-value="Compensa">Compensa</div>
+                                                <div class="chip" data-value="Coroado">Coroado</div>
+                                                <div class="chip" data-value="Crespo">Crespo</div>
+                                                <div class="chip" data-value="Da Paz">Da Paz</div>
+                                                <div class="chip" data-value="Distrito Industrial I">Distrito Industrial I</div>
+                                                <div class="chip" data-value="Distrito Industrial II">Distrito Industrial II</div>
+                                                <div class="chip" data-value="Dom Pedro">Dom Pedro</div>
+                                                <div class="chip" data-value="Educandos">Educandos</div>
+                                                <div class="chip" data-value="Flores">Flores</div>
+                                                <div class="chip" data-value="Gilberto Mestrinho">Gilberto Mestrinho</div>
+                                                <div class="chip" data-value="Glória">Glória</div>
+                                                <div class="chip" data-value="Japiim">Japiim</div>
+                                                <div class="chip" data-value="Jorge Teixeira">Jorge Teixeira</div>
+                                                <div class="chip" data-value="Lago Azul">Lago Azul</div>
+                                                <div class="chip" data-value="Lírio do Vale">Lírio do Vale</div>
+                                                <div class="chip" data-value="Mauazinho">Mauazinho</div>
+                                                <div class="chip" data-value="Monte das Oliveiras">Monte das Oliveiras</div>
+                                                <div class="chip" data-value="Morro da Liberdade">Morro da Liberdade</div>
+                                                <div class="chip" data-value="Nossa Senhora Aparecida">Nossa Senhora Aparecida</div>
+                                                <div class="chip" data-value="Nossa Senhora das Graças">Nossa Senhora das Graças</div>
+                                                <div class="chip" data-value="Nova Cidade">Nova Cidade</div>
+                                                <div class="chip" data-value="Nova Esperança">Nova Esperança</div>
+                                                <div class="chip" data-value="Novo Aleixo">Novo Aleixo</div>
+                                                <div class="chip" data-value="Novo Israel">Novo Israel</div>
+                                                <div class="chip" data-value="Parque 10 de Novembro">Parque 10 de Novembro</div>
+                                                <div class="chip" data-value="Petrópolis">Petrópolis</div>
+                                                <div class="chip" data-value="Planalto">Planalto</div>
+                                                <div class="chip" data-value="Ponta Negra">Ponta Negra</div>
+                                                <div class="chip" data-value="Praça 14 de Janeiro">Praça 14 de Janeiro</div>
+                                                <div class="chip" data-value="Presidente Vargas">Presidente Vargas</div>
+                                                <div class="chip" data-value="Puraquequara">Puraquequara</div>
+                                                <div class="chip" data-value="Raiz">Raiz</div>
+                                                <div class="chip" data-value="Redenção">Redenção</div>
+                                                <div class="chip" data-value="Santa Etelvina">Santa Etelvina</div>
+                                                <div class="chip" data-value="Santa Luzia">Santa Luzia</div>
+                                                <div class="chip" data-value="Santo Agostinho">Santo Agostinho</div>
+                                                <div class="chip" data-value="Santo Antônio">Santo Antônio</div>
+                                                <div class="chip" data-value="São Francisco">São Francisco</div>
+                                                <div class="chip" data-value="São Geraldo">São Geraldo</div>
+                                                <div class="chip" data-value="São Jorge">São Jorge</div>
+                                                <div class="chip" data-value="São José Operário">São José Operário</div>
+                                                <div class="chip" data-value="São Lázaro">São Lázaro</div>
+                                                <div class="chip" data-value="São Raimundo">São Raimundo</div>
+                                                <div class="chip" data-value="Tancredo Neves">Tancredo Neves</div>
+                                                <div class="chip" data-value="Tarumã">Tarumã</div>
+                                                <div class="chip" data-value="Tarumã-Açu">Tarumã-Açu</div>
+                                                <div class="chip" data-value="Zumbi">Zumbi</div>
+                                            </div>                                            
+                                        </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title"> Informações da Rota</h5>
+                                <!-- Tabela -->
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-hover" id="routes-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Código do Caminhão</th>
+                                                <th>Endereço Inicial</th>
+                                                <th>Endereço Final</th>
+                                                <th>Criado em</th>
+                                                <th>Atualizado em</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="routeTableBody">
+                                            <!-- As linhas da tabela serão preenchidas dinamicamente pelo JavaScript -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                    
+                                <!-- Mensagem de Nenhum Resultado -->
+                                <div id="noResults" class="text-center text-muted d-none">
+                                    Nenhum horário encontrado para o bairro selecionado.
+                                </div>
+                            </div>
+                        </div>
+                    </div>                    
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Função para pegar o CSRF token do cookie (caso esteja configurado para ser armazenado no cookie)
+        function getCSRFToken() {
+            let token = null;
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.startsWith('csrftoken=')) {
+                    token = cookie.substring('csrftoken='.length, cookie.length);
+                    break;
+                }
+            }
+            return token;
+        }
+    
+        // Função para alternar a seleção das tags
+        document.querySelectorAll('.chip').forEach(function(tag) {
+            tag.addEventListener('click', function() {
+                tag.classList.toggle('selected');
+                
+                // Armazenar bairros selecionados
+                const selectedBairros = Array.from(
+                    document.querySelectorAll('.chip.selected'),
+                    selectedTag => selectedTag.getAttribute('data-value') || selectedTag.textContent.trim()
+                );
+    
+                console.log('Bairros selecionados:', selectedBairros); // Mostrar bairros selecionados no console
+                
+                // Chamar a função para buscar as rotas com os bairros selecionados
+                fetchRoutesByNeighborhood(selectedBairros);
+            });
+        });
+    
+        // Função para buscar rotas com base nos bairros selecionados
+        function fetchRoutesByNeighborhood(bairros) {
+            // Obtendo o CSRF token
+            const csrftoken = getCSRFToken();
+    
+            // Gerando a URL correta (não precisa mais do bairro na URL)
+            const url = '/routes/neighborhood/';
+    
+            // Fazendo a requisição AJAX
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken
+                },
+                body: JSON.stringify({ bairros: bairros }) // Enviando os bairros como um array no corpo da requisição
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Aqui você chama a função que vai preencher a tabela com os dados das rotas
+                populateRoutesTable(data.routes);
+            })
+            .catch(error => {
+                console.error('Erro:', error);
+            });
+        }
+    
+        // Função para popular a tabela com as rotas recebidas da API
+        function populateRoutesTable(routes) {
+            const routeTableBody = document.getElementById('routeTableBody');
+            const noResultsMessage = document.getElementById('noResults');
+
+            // Limpa o conteúdo da tabela
+            routeTableBody.innerHTML = '';
+
+            // Se não houver rotas, exibe a mensagem de "nenhum resultado"
+            if (routes.length === 0) {
+                noResultsMessage.classList.remove('d-none'); // Mostra a mensagem
+                return; // Sai da função, sem preencher a tabela
+            } else {
+                noResultsMessage.classList.add('d-none'); // Oculta a mensagem
+            }
+
+            // Preenche a tabela com as novas rotas
+            routes.forEach(route => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${route.route_id}</td>
+                    <td>${route.start_address}</td>
+                    <td>${route.end_address}</td>
+                    <td>${route.created_at}</td>
+                    <td>${route.updated_at}</td>
+                `;
+                routeTableBody.appendChild(row);
+            });
+        }
+    </script>    
+</body>
+</html>

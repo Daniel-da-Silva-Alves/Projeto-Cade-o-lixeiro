@@ -1,0 +1,11 @@
+/* Estilos gerais para a estrutura do layout, como grids, containers e colunas.*/
+
+.icon-container {
+    display: flex;
+    align-items: flex-end; /* Alinha os ícones verticalmente no centro */
+    transform: scale(0.50);
+}
+
+.icon-container .bi-trash3 {
+    margin-left: -12px; /* Reduz o espaço entre os ícones */
+}

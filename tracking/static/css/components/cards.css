@@ -1,0 +1,33 @@
+/* Estilos para os cards de status dos lixeiros, como a exibição de informações sobre o status e o tempo de localização.
+
+
+/* components/cards.css */
+.filters-card {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    z-index: 1000;
+    width: 300px;
+}
+
+.legend-card {
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+    z-index: 1000;
+    width: 300px;
+}
+
+/* Responsividade para telas menores */
+@media (max-width: 768px) {
+    .filters-card {
+        width: 100%;
+        position: static;
+        margin-bottom: 1rem;
+    }
+
+    .legend-card {
+        position: static;
+        margin-top: 1rem;
+    }
+}

@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <title>Horários de Passagem</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+    
+
+    <style>
+        :root {
+            --primary-green: #16a34a;
+            --light-green: #f0fdf4;
+        }
+
+        .bg-primary-green {
+            background-color: var(--primary-green) !important;
+        }
+
+        .text-primary-green {
+            color: var(--primary-green) !important;
+        }
+
+        .btn-primary-green {
+            background-color: var(--primary-green);
+            color: white;
+            border: none;
+        }
+
+        .btn-primary-green:hover {
+            background-color: #15803d;
+            color: white;
+        }
+
+        .bg-light-green {
+            background-color: var(--light-green) !important;
+        }
+
+        .map-container {
+            height: calc(100vh - 136px); /* Altura total - (header + footer) */
+            position: relative;
+        }
+
+        .map-placeholder {
+            background-color: #e9ecef;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .filters-card {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            z-index: 1000;
+            width: 300px;
+        }
+
+        .legend-card {
+            position: absolute;
+            bottom: 1rem;
+            right: 1rem;
+            z-index: 1000;
+            width: 300px;
+        }
+
+        .truck-status {
+            font-size: 0.875rem;
+        }
+
+        .truck-time {
+            font-size: 0.75rem;
+            color: #6c757d;
+        }
+
+        .footer {
+            background-color: #f8f9fa;
+            color: #6c757d;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        .custom-link-width {
+            width: 200px; /* Defina a largura desejada */
+            text-align: center; /* Centraliza o texto dentro do link */
+        }
+
+        .navbar {
+            height: 65px; /* Ajuste o valor conforme necessário */
+        }
+
+        .icon-container {
+            display: flex;
+            align-items: flex-end; /* Alinha os ícones verticalmente no centro */
+            transform: scale(0.50);
+        }
+
+        .icon-container .bi-trash3 {
+            margin-left: -12px; /* Reduz o espaço entre os ícones */
+        }
+        /* Posiciona os títulos sobre o mapa */
+        .map-overlay {
+            position: absolute;
+            top: 20px; /* Altere conforme necessário */
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000; /* Certifique-se de que fique acima do mapa */
+            text-align: center;
+            background: rgba(255, 255, 255, 0,1); /* Fundo semi-transparente */
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Estiliza o mapa para que ocupe o tamanho correto */
+        .map-placeholder {
+            height: 500px; /* Altura desejada para o mapa */
+            position: relative;
+        }
+
+        /* Responsividade para telas menores */
+        @media (max-width: 768px) {
+            .filters-card {
+                width: 100%;
+                position: static;
+                margin-bottom: 1rem;
+            }
+
+            .legend-card {
+                position: static;
+                margin-top: 1rem;
+            }
+        }
+    </style>
+    <title>Routes for {{ neighborhood }}</title>
+</head>
+<body>
+    <!-- Header -->
+    <header class="bg-primary-green shadow">
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <div class="container">
+                <!-- Logo e Nome -->
+                <a class="navbar-brand d-flex align-items-center" href="/">
+                    <span style="margin-left: 50px; font-size: 25px;">Cadê o Lixeiro?</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="47" height="47" viewBox="0 0 16 16" fill="currentColor" style="margin-left: 10px;">
+                        <path d="M0 3.5A1.5 1.5 0 0 1 1.5 2h9A1.5 1.5 0 0 1 12 3.5V5h1.02a1.5 1.5 0 0 1 1.17.563l1.481 1.85a1.5 1.5 0 0 1 .329.938V10.5a1.5 1.5 0 0 1-1.5 1.5H14a2 2 0 1 1-4 0H5a2 2 0 1 1-3.998-.085A1.5 1.5 0 0 1 0 10.5zm1.294 7.456A2 2 0 0 1 4.732 11h5.536a2 2 0 0 1 .732-.732V3.5a.5.5 0 0 0-.5-.5h-9a.5.5 0 0 0-.5.5v7a.5.5 0 0 0 .294.456M12 10a2 2 0 0 1 1.732 1h.768a.5.5 0 0 0 .5-.5V8.35a.5.5 0 0 0-.11-.312l-1.48-1.85A.5.5 0 0 0 13.02 6H12zm-9 1a1 1 0 1 0 0 2 1 1 0 0 0 0-2m9 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2" stroke-width="0.5"/>
+                        <g transform="translate(3.54, 4) scale(0.35)">
+                            <path d="M9.302 1.256a1.5 1.5 0 0 0-2.604 0l-1.704 2.98a.5.5 0 0 0 .869.497l1.703-2.981a.5.5 0 0 1 .868 0l2.54 4.444-1.256-.337a.5.5 0 1 0-.26.966l2.415.647a.5.5 0 0 0 .613-.353l.647-2.415a.5.5 0 1 0-.966-.259l-.333 1.242zM2.973 7.773l-1.255.337a.5.5 0 1 1-.26-.966l2.416-.647a.5.5 0 0 1 .612.353l.647 2.415a.5.5 0 0 1-.966.259l-.333-1.242-2.545 4.454a.5.5 0 0 0 .434.748H5a.5.5 0 0 1 0 1H1.723A1.5 1.5 0 0 1 .421 12.24zm10.89 1.463a.5.5 0 1 0-.868.496l1.716 3.004a.5.5 0 0 1-.434.748h-5.57l.647-.646a.5.5 0 1 0-.708-.707l-1.5 1.5a.5.5 0 0 0 0 .707l1.5 1.5a.5.5 0 1 0 .708-.707l-.647-.647h5.57a1.5 1.5 0 0 0 1.302-2.244z" stroke-width="0.8"/>
+                        </g>
+                    </svg>
+                </a>
+
+                <!-- Toggler para menu em telas pequenas -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Menu -->
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/passage_times-interface">
+                                <i class="bi bi-clock"></i> Horários de Passagem
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#">
+                                <i class="bi bi-geo-alt"></i> Locais de Descarte
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="bi bi-info-circle"></i> Sobre
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="map-container">
+        <!-- Títulos sobre o mapa -->
+        <div class="map-overlay">
+            <h2 class="text-center mb-3">
+                <i class="bi bi-geo-alt"></i> Locais de Descarte
+            </h2>
+            <p class="text-center text-muted">Filtre por bairros e veja os locais de descarte disponíveis na sua região.</p>
+        </div>
+        <!-- Filtros -->
+        <div class="filters-card">
+            <div class="card">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0">Filtros</h6>
+                    <button class="btn btn-sm btn-link text-primary-green p-0" type="button" data-bs-toggle="collapse" data-bs-target="#filterContent">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                        </svg>
+                    </button>
+                </div>
+                <div id="neighborhood-dropdown" class="collapse show">
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label">Bairros</label>
+                                <select class="form-select" id="neighborhood-dropdown">
+                                    <option value="todos">Todos os bairros</option>
+                                    <option value="Adrianópolis">Adrianópolis</option>
+                                    <option value="Aleixo">Aleixo</option>
+                                    <option value="Alvorada">Alvorada</option>
+                                    <option value="Armando Mendes">Armando Mendes</option>
+                                    <option value="Betânia">Betânia</option>
+                                    <option value="Cachoeirinha">Cachoeirinha</option>
+                                    <option value="Centro">Centro</option>
+                                    <option value="Chapada">Chapada</option>
+                                    <option value="Cidade de Deus">Cidade de Deus</option>
+                                    <option value="Cidade Nova">Cidade Nova</option>
+                                    <option value="Colônia Antônio Aleixo">Colônia Antônio Aleixo</option>
+                                    <option value="Colônia Oliveira Machado">Colônia Oliveira Machado</option>
+                                    <option value="Colônia Santo Antônio">Colônia Santo Antônio</option>
+                                    <option value="Colônia Terra Nova">Colônia Terra Nova</option>
+                                    <option value="Compensa">Compensa</option>
+                                    <option value="Coroado">Coroado</option>
+                                    <option value="Crespo">Crespo</option>
+                                    <option value="Da Paz">Da Paz</option>
+                                    <option value="Distrito Industrial I">Distrito Industrial I</option>
+                                    <option value="Distrito Industrial II">Distrito Industrial II</option>
+                                    <option value="Dom Pedro">Dom Pedro</option>
+                                    <option value="Educandos">Educandos</option>
+                                    <option value="Flores">Flores</option>
+                                    <option value="Gilberto Mestrinho">Gilberto Mestrinho</option>
+                                    <option value="Glória">Glória</option>
+                                    <option value="Japiim">Japiim</option>
+                                    <option value="Jorge Teixeira">Jorge Teixeira</option>
+                                    <option value="Lago Azul">Lago Azul</option>
+                                    <option value="Lírio do Vale">Lírio do Vale</option>
+                                    <option value="Mauazinho">Mauazinho</option>
+                                    <option value="Monte das Oliveiras">Monte das Oliveiras</option>
+                                    <option value="Morro da Liberdade">Morro da Liberdade</option>
+                                    <option value="Nossa Senhora Aparecida">Nossa Senhora Aparecida</option>
+                                    <option value="Nossa Senhora das Graças">Nossa Senhora das Graças</option>
+                                    <option value="Nova Cidade">Nova Cidade</option>
+                                    <option value="Nova Esperança">Nova Esperança</option>
+                                    <option value="Novo Aleixo">Novo Aleixo</option>
+                                    <option value="Novo Israel">Novo Israel</option>
+                                    <option value="Parque 10 de Novembro">Parque 10 de Novembro</option>
+                                    <option value="Petrópolis">Petrópolis</option>
+                                    <option value="Planalto">Planalto</option>
+                                    <option value="Ponta Negra">Ponta Negra</option>
+                                    <option value="Praça 14 de Janeiro">Praça 14 de Janeiro</option>
+                                    <option value="Presidente Vargas">Presidente Vargas</option>
+                                    <option value="Puraquequara">Puraquequara</option>
+                                    <option value="Raiz">Raiz</option>
+                                    <option value="Redenção">Redenção</option>
+                                    <option value="Santa Etelvina">Santa Etelvina</option>
+                                    <option value="Santa Luzia">Santa Luzia</option>
+                                    <option value="Santo Agostinho">Santo Agostinho</option>
+                                    <option value="Santo Antônio">Santo Antônio</option>
+                                    <option value="São Francisco">São Francisco</option>
+                                    <option value="São Geraldo">São Geraldo</option>
+                                    <option value="São Jorge">São Jorge</option>
+                                    <option value="São José Operário">São José Operário</option>
+                                    <option value="São Lázaro">São Lázaro</option>
+                                    <option value="São Raimundo">São Raimundo</option>
+                                    <option value="Tancredo Neves">Tancredo Neves</option>
+                                    <option value="Tarumã">Tarumã</option>
+                                    <option value="Tarumã-Açu">Tarumã-Açu</option>
+                                    <option value="Vila Buriti">Vila Buriti</option>
+                                    <option value="Vila da Prata">Vila da Prata</option>
+                                    <option value="Zumbi dos Palmares">Zumbi dos Palmares</option>
+                                </select>                                
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <button class="btn btn-outline-secondary btn-sm" id="clearFilters">Limpar</button>
+                            <button class="btn btn-primary-green btn-sm" id="apply-filter" onclick="fetchDiscardLocations()">Aplicar</button>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Map Placeholder with Leaflet -->
+        <div id="mapid" class="map-placeholder"></div>
+    </main>
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container text-center py-3">
+            <span>&copy; 2024 Cadê o Lixeiro?</span>
+        </div>
+    </footer>
+
+    <script>
+
+        // Inicialização do mapa
+        var map = L.map('mapid').setView([-3.0421492195005304, -59.98956721838468], 13);
+    
+        // Configuração do mapa com o Tile Layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        function fetchDiscardLocations() {
+        // Pega o bairro selecionado pelo usuário no filtro da interface
+        const neighborhood = document.getElementById('neighborhood-dropdown').value;
+
+        // Se não houver bairro selecionado, exibe um alerta
+        if (!neighborhood) {
+            alert("Por favor, selecione um bairro.");
+            return;
+        }
+
+        // Fazendo a requisição para a API do Django
+        fetch(`/get-discard-locations/?neighborhood=${neighborhood}`)
+            .then(response => response.json())
+            .then(data => {
+                // Verifica se existem locais de descarte
+                if (data.locations && data.locations.length > 0) {
+                    // Chama a função para exibir os locais no mapa
+                    displayLocationsOnMap(data.locations);
+                } else {
+                    alert("Nenhum local de descarte encontrado para este bairro.");
+                }
+            })
+            .catch(error => {
+                console.error("Erro ao buscar os locais de descarte:", error);
+                alert("Ocorreu um erro ao buscar os locais de descarte.");
+            });
+        }
+
+        function displayLocationsOnMap(locations) {
+        // Limpa o mapa (remove marcadores antigos, caso existam)
+        map.eachLayer(function(layer) {
+            if (layer instanceof L.Marker) {
+                map.removeLayer(layer);
+            }
+        });
+
+        // Itera sobre os locais de descarte e adiciona um marcador no mapa
+        locations.forEach(location => {
+            const lat = location.latitude;
+            const lon = location.longitude;
+
+            // Cria um marcador para cada local de descarte
+            const marker = L.marker([lat, lon]).addTo(map)
+                .bindPopup(`
+                    <strong>${location.name}</strong><br>
+                    <em>${location.content_types}</em><br>
+                    ${location.address}
+                `);
+        });
+
+        // Ajusta a visualização do mapa para incluir todos os marcadores
+        if (locations.length > 0) {
+            const latLngs = locations.map(location => [location.latitude, location.longitude]);
+            map.fitBounds(latLngs);
+        }
+    }
+
+        // Ação para o botão "Aplicar"
+        document.getElementById('apply-filter').addEventListener('click', function() {
+            const selectedNeighborhood = document.getElementById('neighborhood-dropdown').value;
+            fetchDiscardLocations(selectedNeighborhood);
+        });
+
+        // Ação para o botão "Limpar"
+        document.getElementById('clearFilters').addEventListener('click', function() {
+            document.getElementById('neighborhood-dropdown').value = 'todos';
+        });
+    </script>    
+</body>
+</html>

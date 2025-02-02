@@ -1,0 +1,7 @@
+/* Estilos específicos para formulários, como aqueles usados para capturar dados de usuários ou para filtros de pesquisa.*/
+
+
+.custom-link-width {
+    width: 200px; /* Defina a largura desejada */
+    text-align: center; /* Centraliza o texto dentro do link */
+}

@@ -1,0 +1,10 @@
+/* Estilos específicos para o cabeçalho.*/
+
+/* Classe para aplicar o fundo verde primário */
+.bg-primary-green {
+    background-color: var(--primary-green); /* Escolha a cor desejada */
+}
+
+.navbar {
+    height: 65px; /* Ajuste o valor conforme necessário */
+}

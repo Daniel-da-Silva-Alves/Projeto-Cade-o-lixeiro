@@ -1,0 +1,10 @@
+/* Estilos específicos para a página inicial, incluindo qualquer personalização que você precise para essa página, como banners, seções de conteúdo ou chamadas à ação.*/
+
+.truck-status {
+    font-size: 0.875rem;
+}
+
+.truck-time {
+    font-size: 0.75rem;
+    color: #6c757d;
+}

@@ -1,0 +1,16 @@
+/* Estilos dedicados à exibição do mapa Leaflet.js, garantindo que o mapa ocupe o espaço necessário na tela.
+
+
+/* components/map.css */
+.map-container {
+    height: calc(100vh - 136px); /* Altura total - (header + footer) */
+    position: relative;
+}
+
+.map-placeholder {
+    background-color: #e9ecef;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
