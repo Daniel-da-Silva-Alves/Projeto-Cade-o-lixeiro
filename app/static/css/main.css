@@ -1,7 +1,6 @@
 /*Este arquivo será responsável por importar os outros arquivos de estilo e reunir tudo em um único lugar para que seja possível carregar todos os estilos necessários na página */
 
 @import url('./base/variables.css');
-@import url('./base/reset.css');
 
 @import url('./layout/header.css');
 @import url('./layout/footer.css');
