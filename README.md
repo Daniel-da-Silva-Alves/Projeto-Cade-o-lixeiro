@@ -1,127 +1,198 @@
-# 🚛 Cadê o Lixeiro? – Projeto Open Source
+# Cadê o Lixeiro?
 
-## 🌱 Sobre o Projeto  
+**Gestão inteligente de resíduos urbanos para Manaus/AM** — rastreamento de caminhões de coleta em tempo real, horários de passagem, locais de descarte consciente, denúncias ambientais e ranking de bairros sustentáveis.
 
-O **"Cadê o Lixeiro?"** é uma solução inovadora para a **gestão inteligente de resíduos urbanos**. Criado no programa **InovaTech** pela primeira turma noturna de **Sistemas de Informação do CEUNI-Fametro Cachoeirinha**, o projeto tem como objetivo otimizar a coleta de lixo na cidade de **Manaus**, promovendo sustentabilidade e participação cidadã.  
-
-Nosso aplicativo permite o **rastreamento em tempo real** dos caminhões de coleta, exibe **horários de passagem**, informa **locais de descarte consciente** e possui um sistema de **denúncias de áreas contaminadas e incêndios criminosos**. Além disso, incentiva práticas sustentáveis por meio de um **sistema de créditos e benefícios fiscais** e promove a **fiscalização colaborativa** contra descartes ilegais.  
-
-## 🚀 Status Atual: Modularização do Front-End  
-
-Atualmente, estamos na fase de **modularização do front-end**, com foco em:  
-
-✅ **Componentização do código** para facilitar a manutenção e expansão.  
-✅ **Refatoração da interface** para melhorar a experiência do usuário.  
-✅ **Otimização da comunicação entre front-end e back-end** para melhor desempenho.  
+[![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![SvelteKit](https://img.shields.io/badge/SvelteKit-Svelte%205-FF3E00?logo=svelte&logoColor=white)](https://svelte.dev)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
+[![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL%20+%20PostGIS-3FCF8E?logo=supabase&logoColor=white)](https://supabase.com)
 
 ---
 
-## 🛠️ Funcionalidades  
+## Overview
 
-- **📍 Rastreamento em tempo real** dos caminhões de coleta.  
-- **🕒 Consulta de horários** de passagem dos caminhões.  
-- **♻️ Locais de descarte consciente** para resíduos recicláveis e perigosos.  
-- **⚠️ Denúncia de áreas contaminadas e incêndios criminosos.**  
-- **🎖️ Sistema de créditos e benefícios fiscais** para incentivar boas práticas ambientais.  
-- **🚯 Denúncia de descarte ilegal** para promover fiscalização colaborativa.  
+Cadê o Lixeiro? é uma plataforma cívica que conecta cidadãos ao serviço de coleta de lixo em Manaus. A aplicação permite acompanhar a posição dos caminhões de coleta via GPS em tempo real, consultar horários e rotas de passagem por bairro, encontrar ecopontos para descarte responsável, registrar denúncias ambientais geolocalizadas e receber notificações push quando o caminhão se aproxima.
 
----
+> [!NOTE]
+> Este é um projeto open source desenvolvido como portfólio técnico. Ele demonstra habilidades em arquitetura full-stack, comunicação em tempo real via WebSocket, geolocalização com PostGIS, e desenvolvimento de interfaces responsivas com Svelte 5.
 
-## 🏗️ Tecnologias Utilizadas  
+## Features
 
-### 🔧 Back-End  
-- **Django** – Framework web para o desenvolvimento da API.  
-- **SQLite** – Banco de dados para armazenamento das informações.  
+- **Rastreamento em tempo real** — Mapa interativo com posições atualizadas via WebSocket e geocodificação reversa com cache PostGIS
+- **Horários de passagem** — Consulta de rotas e pontos de coleta por bairro com visualização no mapa (polylines + marcadores)
+- **Locais de descarte** — Ecopontos filtráveis por bairro e tipo de resíduo (orgânicos, recicláveis, eletrônicos, etc.) com avaliações
+- **Denúncias ambientais** — Formulário com upload de fotos, marcador arrastável no mapa, detecção automática de bairro via PostGIS e acompanhamento por ID
+- **Ranking de bairros** — Gamificação com ranking mensal/acumulado atualizado automaticamente via Materialized View
+- **Notificações push** — Alerta quando um caminhão entra no bairro do cidadão, com anti-spam (1 push/bairro/caminhão/hora)
+- **Painel admin** — Dashboard com KPIs, gráficos de denúncias e CRUD completo via SQLAdmin
+- **PWA** — Instalável como aplicativo, com Service Worker para push notifications
 
-### 🎨 Front-End  
-- **Bootstrap** – Framework para estilização responsiva.  
-- **JavaScript (ES6+)** – Interações dinâmicas na interface.  
-- **Leaflet.js** – Biblioteca para mapas e rastreamento.  
-- **HTML5 e CSS3** – Estrutura e estilização da aplicação.  
+## Tech Stack
 
----
+| Layer | Technology |
+|-------|-----------|
+| **Frontend** | SvelteKit (Svelte 5 + Runes) · Tailwind CSS v4 · Leaflet.js · TypeScript |
+| **Backend** | FastAPI · SQLAlchemy 2.0 (async) · GeoAlchemy2 · uvloop · WebSocket nativo |
+| **Database** | Supabase (PostgreSQL + PostGIS) · Row Level Security · Materialized Views |
+| **Auth** | Supabase Auth (JWT ES256/HS256) |
+| **Storage** | Supabase Storage (fotos de denúncias) |
+| **Notifications** | Web Push (pywebpush + VAPID) |
+| **Admin** | SQLAdmin (8 ModelViews) |
+| **Deploy** | Docker (backend) · Static adapter (frontend SPA) |
 
-## 🏁 Como Configurar o Projeto Localmente?  
+## Architecture
 
-Para testar o projeto em sua máquina, siga os passos abaixo:  
-
-### 🔽 1. Clone o repositório  
-Antes de começar, certifique-se de ter **Git**, **Python** e **pip** instalados.  
-
-```bash
-git clone https://github.com/seu-usuario/cade-o-lixeiro.git
-cd cade-o-lixeiro
+```
+┌─────────────────┐     WebSocket      ┌─────────────────┐
+│    SvelteKit     │◄──────────────────►│     FastAPI      │
+│   (Svelte 5)    │     REST API       │   (async/await)  │
+│                 │◄──────────────────►│                  │
+│  Leaflet.js     │                    │  SQLAlchemy 2.0  │
+│  Tailwind v4    │                    │  GeoAlchemy2     │
+└────────┬────────┘                    └────────┬─────────┘
+         │                                      │
+         │  Supabase Auth (JWT)                 │  asyncpg
+         ▼                                      ▼
+┌───────────────────────────────────────────────────────────┐
+│                    Supabase                               │
+│  PostgreSQL + PostGIS  │  Auth  │  Storage  │  RLS       │
+└───────────────────────────────────────────────────────────┘
 ```
 
-### 🏗 2. Crie e ative um ambiente virtual  
-Para evitar conflitos de dependências, utilize um **ambiente virtual**:  
+## Project Structure
 
-```bash
-# No Windows (cmd)
-python -m venv venv
-venv\Scripts\activate
-
-# No Linux/Mac
-python3 -m venv venv
-source venv/bin/activate
+```
+├── frontend/              SvelteKit SPA
+│   └── src/
+│       ├── lib/
+│       │   ├── components/    UI components (Mapa, Ranking, Upload, etc.)
+│       │   ├── stores/        Svelte 5 rune stores (tracking, auth)
+│       │   ├── services/      Push notifications, API clients
+│       │   └── utils/         CPF validation, formatters
+│       └── routes/            Pages (/, /horarios, /descarte, /denunciar, etc.)
+├── backend/               FastAPI API
+│   └── app/
+│       ├── models/            13 SQLAlchemy models (GeoAlchemy2)
+│       ├── routers/           8 route modules (REST endpoints)
+│       ├── services/          Geocoding, push, scheduler
+│       ├── websockets/        tracking_hub + driver_hub
+│       └── admin/             SQLAdmin setup (8 ModelViews)
+├── supabase/              Migrations + seed data
+│   ├── migrations/            4 SQL migrations (tables, views, RLS)
+│   └── seed/                  63 bairros + sample data
+└── specs/                 Documentation
+    ├── srs/                   Software Requirements Specifications
+    ├── sdd/                   Software Design Documents
+    └── ROADMAP.md             Implementation roadmap (7 phases)
 ```
 
-### 📦 3. Instale as dependências do projeto  
+## Getting Started
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) 20+
+- [Python](https://python.org/) 3.12+
+- A [Supabase](https://supabase.com) project with **PostGIS** enabled
+
+### Frontend
+
 ```bash
+cd frontend
+cp .env.example .env          # Configure Supabase URL, anon key, API URL
+npm install
+npm run dev                   # → http://localhost:5173
+```
+
+### Backend
+
+```bash
+cd backend
+python -m venv .venv
+source .venv/bin/activate     # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
+cp .env.example .env          # Configure DATABASE_URL, Supabase keys, JWT secret
+uvicorn app.main:app --reload # → http://localhost:8000
 ```
 
-### 🛠 4. Configure o banco de dados  
+> [!TIP]
+> The backend includes interactive API docs at `/docs` (Swagger) and `/redoc`.
+
+### Database
+
+Apply the migrations in order via the Supabase SQL Editor or CLI:
+
 ```bash
-python manage.py migrate
+# Migrations (in order)
+supabase/migrations/001_tabelas_base.sql
+supabase/migrations/002_funcionalidades.sql
+supabase/migrations/003_views_indices.sql
+supabase/migrations/004_rls.sql
+
+# Seed data (63 neighborhoods of Manaus + sample routes/locations)
+supabase/seed/001_bairros.sql
 ```
 
-### 🚀 5. Inicie o servidor localmente  
-```bash
-python manage.py runserver
-```
+### Environment Variables
 
-Agora, acesse **http://127.0.0.1:8000/** no navegador para visualizar a aplicação!  
+<details>
+<summary>Backend (<code>.env</code>)</summary>
 
----
+| Variable | Description |
+|----------|-------------|
+| `DATABASE_URL` | PostgreSQL connection string (asyncpg) |
+| `SUPABASE_URL` | Supabase project URL |
+| `SUPABASE_SERVICE_KEY` | Service role key (server-side only) |
+| `SUPABASE_ANON_KEY` | Anonymous key |
+| `JWT_SECRET` | Supabase JWT secret |
+| `VAPID_PRIVATE_KEY` | VAPID private key for push notifications |
+| `VAPID_PUBLIC_KEY` | VAPID public key |
+| `VAPID_CLAIMS_EMAIL` | Contact email for VAPID |
 
-## 🤝 Como Contribuir?  
+</details>
 
-Adoraríamos contar com sua ajuda para melhorar o **"Cadê o Lixeiro?"**! Siga os passos abaixo para contribuir:  
+<details>
+<summary>Frontend (<code>.env</code>)</summary>
 
-### 📌 1. Faça um fork do repositório  
-Clique no botão **Fork** no GitHub para copiar o repositório para sua conta.  
+| Variable | Description |
+|----------|-------------|
+| `PUBLIC_SUPABASE_URL` | Supabase project URL |
+| `PUBLIC_SUPABASE_ANON_KEY` | Anonymous key |
+| `PUBLIC_API_URL` | Backend API base URL |
+| `PUBLIC_WS_URL` | WebSocket base URL |
 
-### 📌 2. Clone o repositório para sua máquina  
-```bash
-git clone https://github.com/seu-usuario/cade-o-lixeiro.git
-cd cade-o-lixeiro
-```
+</details>
 
-### 📌 3. Crie uma branch para sua contribuição  
-```bash
-git checkout -b minha-contribuicao
-```
+## User Profiles
 
-### 📌 4. Implemente sua melhoria e faça um commit  
-```bash
-git add .
-git commit -m "Descrição da melhoria implementada"
-```
+| Profile | Auth | Capabilities |
+|---------|:----:|-------------|
+| Citizen | — | Live map, schedules, disposal locations, complaints, neighborhood ranking |
+| Driver | CPF login | Share GPS location, view assigned route, start/stop collection |
+| Admin | Login | Dashboard with KPIs, manage all entities via SQLAdmin |
 
-### 📌 5. Envie para o repositório remoto  
-```bash
-git push origin minha-contribuicao
-```
+## Documentation
 
-### 📌 6. Abra um Pull Request  
-No GitHub, vá até a página do seu fork, clique em **"New Pull Request"** e descreva sua alteração.  
+The `specs/` directory contains comprehensive documentation following industry standards:
 
-🚀 **Dica:** Se sua contribuição envolver a modularização do front-end, siga os padrões do projeto para garantir a consistência da interface!  
+- [Implementation Roadmap](./specs/ROADMAP.md) — 7-phase development checklist with dependency graph
+- [Software Requirements (SRS)](./specs/srs/) — Functional requirements per feature
+- [Software Design (SDD)](./specs/sdd/) — Technical architecture, data models, API contracts
 
----
-## 📬 Contato  
+## API Endpoints
 
-📧 **domhnalprofissional@gmail.com**  
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/api/bairros` | List all 63 neighborhoods |
+| `GET` | `/api/ranking` | Neighborhood sustainability ranking |
+| `GET` | `/api/descarte` | Disposal locations (filterable) |
+| `POST` | `/api/denuncias` | Submit environmental complaint |
+| `POST` | `/api/rotas/por-bairro` | Routes by neighborhood |
+| `GET` | `/api/auth/validar-perfil` | Validate driver profile |
+| `WS` | `/ws/tracking` | Real-time truck positions (public) |
+| `WS` | `/ws/driver/{truck_id}` | Driver GPS sharing (authenticated) |
 
-Junte-se a nós para construir uma cidade mais limpa e sustentável! 🌍♻️
+## Author
+
+**Daniel da Silva Alves**
+
+This project was designed, architected and built as a full-stack portfolio piece showcasing real-world skills in systems design, real-time communication, geospatial data, and modern web development.

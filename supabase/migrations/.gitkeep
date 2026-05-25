@@ -1,0 +1,3 @@
+# Este diretório contém as migrações SQL do Supabase.
+# Criadas via: supabase migration new <nome>
+# Aplicadas via: supabase db push

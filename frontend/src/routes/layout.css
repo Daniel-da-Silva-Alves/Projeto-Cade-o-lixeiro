@@ -1,0 +1,199 @@
+/* Google Font: Inter — must come before @import 'tailwindcss' */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+@import 'tailwindcss';
+
+/* ======================================
+   Cadê o Lixeiro? — Design System Base
+   Tema de sustentabilidade: verdes, azuis, terra
+   ====================================== */
+
+@theme {
+  /* Core Colors */
+  --color-primary-50: #ecfdf5;
+  --color-primary-100: #d1fae5;
+  --color-primary-200: #a7f3d0;
+  --color-primary-300: #6ee7b7;
+  --color-primary-400: #34d399;
+  --color-primary-500: #10b981;
+  --color-primary-600: #059669;
+  --color-primary-700: #047857;
+  --color-primary-800: #065f46;
+  --color-primary-900: #064e3b;
+
+  --color-accent-400: #38bdf8;
+  --color-accent-500: #0ea5e9;
+  --color-accent-600: #0284c7;
+
+  --color-earth-400: #a3a380;
+  --color-earth-500: #7c7c5c;
+  --color-earth-600: #5c5c40;
+
+  --color-danger-500: #ef4444;
+  --color-warning-500: #f59e0b;
+  --color-info-500: #3b82f6;
+
+  /* Surface Colors */
+  --color-surface-50: #fafaf9;
+  --color-surface-100: #f5f5f4;
+  --color-surface-200: #e7e5e4;
+  --color-surface-300: #d6d3d1;
+  --color-surface-400: #a8a29e;
+  --color-surface-500: #78716c;
+  --color-surface-600: #57534e;
+  --color-surface-700: #44403c;
+  --color-surface-800: #292524;
+  --color-surface-900: #1c1917;
+
+  /* Font */
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+
+  /* Shadows */
+  --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow-elevated: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-glow: 0 0 20px rgb(16 185 129 / 0.15);
+
+  /* Border Radius */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-full: 9999px;
+}
+
+/* ======================================
+   Base Styles
+   ====================================== */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--color-surface-800);
+  background-color: var(--color-surface-50);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ======================================
+   Focus & Accessibility
+   ====================================== */
+:focus-visible {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* Skip to content (screen readers) */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* ======================================
+   Micro-Animations
+   ====================================== */
+
+/* Skeleton loader shimmer */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-surface-100) 25%,
+    var(--color-surface-200) 50%,
+    var(--color-surface-100) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: var(--radius-md);
+}
+
+/* Fade-in animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Pulse animation for live indicators */
+@keyframes pulse-live {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.pulse-live {
+  animation: pulse-live 2s ease-in-out infinite;
+}
+
+/* Slide-down for mobile menu */
+@keyframes slideDown {
+  from { opacity: 0; max-height: 0; }
+  to { opacity: 1; max-height: 500px; }
+}
+
+.slide-down {
+  animation: slideDown 0.3s ease-out;
+  overflow: hidden;
+}
+
+/* Scale on hover for cards */
+@keyframes hoverLift {
+  to { transform: translateY(-2px); box-shadow: var(--shadow-elevated); }
+}
+
+/* Spin animation */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ======================================
+   Leaflet Overrides
+   ====================================== */
+.leaflet-container {
+  font-family: var(--font-sans);
+  border-radius: var(--radius-xl);
+}
+
+.leaflet-popup-content-wrapper {
+  border-radius: var(--radius-lg) !important;
+  box-shadow: var(--shadow-elevated) !important;
+}
+
+.leaflet-popup-content {
+  font-family: var(--font-sans) !important;
+  font-size: 0.875rem !important;
+  line-height: 1.5 !important;
+  margin: 12px 16px !important;
+}
+
+.leaflet-control-zoom a {
+  border-radius: var(--radius-md) !important;
+}
+
+/* ======================================
+   Print Styles
+   ====================================== */
+@media print {
+  header, footer, nav {
+    display: none !important;
+  }
+  main {
+    margin: 0;
+    padding: 0;
+  }
+}
