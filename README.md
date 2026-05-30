@@ -1,29 +1,46 @@
-# Cadê o Lixeiro?
+<p align="center">
+  <img src="frontend/static/android-chrome-512x512.png" alt="Cadê o Lixeiro? Logo" width="180" />
+</p>
 
-**Gestão inteligente de resíduos urbanos para Manaus/AM** — rastreamento de caminhões de coleta em tempo real, horários de passagem, locais de descarte consciente, denúncias ambientais e ranking de bairros sustentáveis.
+<h1 align="center">Cadê o Lixeiro?</h1>
 
-[![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![SvelteKit](https://img.shields.io/badge/SvelteKit-Svelte%205-FF3E00?logo=svelte&logoColor=white)](https://svelte.dev)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
-[![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL%20+%20PostGIS-3FCF8E?logo=supabase&logoColor=white)](https://supabase.com)
+<p align="center">
+  Gestão inteligente de resíduos urbanos para Manaus/AM — rastreamento de caminhões<br>
+  de coleta em tempo real, horários de passagem e denúncias ambientais geolocalizadas.
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/SvelteKit-Svelte%205-FF3E00?style=flat&logo=svelte&logoColor=white" alt="SvelteKit" />
+  <img src="https://img.shields.io/badge/TypeScript-5.0-3178C6?style=flat&logo=typescript&logoColor=white" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/Tailwind%20CSS-4.0-06B6D4?style=flat&logo=tailwindcss&logoColor=white" alt="Tailwind CSS" />
+  <img src="https://img.shields.io/badge/FastAPI-0.115-009688?style=flat&logo=fastapi&logoColor=white" alt="FastAPI" />
+  <img src="https://img.shields.io/badge/Python-3.12-3776AB?style=flat&logo=python&logoColor=white" alt="Python" />
+  <img src="https://img.shields.io/badge/Supabase-PostgreSQL%20+%20PostGIS-3FCF8E?style=flat&logo=supabase&logoColor=white" alt="Supabase" />
+  <img src="https://img.shields.io/badge/Leaflet.js-1.9-199900?style=flat&logo=leaflet&logoColor=white" alt="Leaflet" />
+  <img src="https://img.shields.io/badge/Docker-Deploy-2496ED?style=flat&logo=docker&logoColor=white" alt="Docker" />
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT License" />
+</p>
 
 ---
 
 ## Overview
 
-Cadê o Lixeiro? é uma plataforma cívica que conecta cidadãos ao serviço de coleta de lixo em Manaus. A aplicação permite acompanhar a posição dos caminhões de coleta via GPS em tempo real, consultar horários e rotas de passagem por bairro, encontrar ecopontos para descarte responsável, registrar denúncias ambientais geolocalizadas e receber notificações push quando o caminhão se aproxima.
+**Cadê o Lixeiro?** é uma plataforma cívica que conecta cidadãos ao serviço de coleta de lixo em Manaus. A aplicação permite acompanhar a posição dos caminhões de coleta via GPS em tempo real, consultar horários e rotas de passagem por bairro, encontrar ecopontos para descarte responsável, registrar denúncias ambientais geolocalizadas e receber notificações push quando o caminhão se aproxima.
 
 > [!NOTE]
-> Este é um projeto open source desenvolvido como portfólio técnico. Ele demonstra habilidades em arquitetura full-stack, comunicação em tempo real via WebSocket, geolocalização com PostGIS, e desenvolvimento de interfaces responsivas com Svelte 5.
+> Projeto open source desenvolvido como portfólio técnico. Demonstra habilidades em arquitetura full-stack, comunicação em tempo real via WebSocket, geolocalização com PostGIS e interfaces responsivas com Svelte 5.
 
 ## Features
 
 - **Rastreamento em tempo real** — Mapa interativo com posições atualizadas via WebSocket e geocodificação reversa com cache PostGIS
-- **Horários de passagem** — Consulta de rotas e pontos de coleta por bairro com visualização no mapa (polylines + marcadores)
-- **Locais de descarte** — Ecopontos filtráveis por bairro e tipo de resíduo (orgânicos, recicláveis, eletrônicos, etc.) com avaliações
-- **Denúncias ambientais** — Formulário com upload de fotos, marcador arrastável no mapa, detecção automática de bairro via PostGIS e acompanhamento por ID
-- **Ranking de bairros** — Gamificação com ranking mensal/acumulado atualizado automaticamente via Materialized View
-- **Notificações push** — Alerta quando um caminhão entra no bairro do cidadão, com anti-spam (1 push/bairro/caminhão/hora)
+- **Horários de passagem** — Consulta de rotas e pontos de coleta por bairro com visualização no mapa
+- **Locais de descarte** — Ecopontos filtráveis por bairro e tipo de resíduo com avaliações
+- **Denúncias ambientais** — Upload de fotos, marcador arrastável no mapa, detecção automática de bairro via PostGIS
+- **Ranking de bairros** — Gamificação com ranking mensal/acumulado via Materialized View
+- **Notificações push** — Alerta quando um caminhão entra no bairro do cidadão
 - **Painel admin** — Dashboard com KPIs, gráficos de denúncias e CRUD completo via SQLAdmin
 - **PWA** — Instalável como aplicativo, com Service Worker para push notifications
 
